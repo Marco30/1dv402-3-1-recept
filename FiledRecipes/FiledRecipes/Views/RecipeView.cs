@@ -5,12 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FiledRecipes.Views
+namespace FiledRecipes.Views//Marco villegas 2014-10-27
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class RecipeView : ViewBase, IRecipeView
-    {
-    }
+     public class RecipeView : ViewBase, IRecipeView// presenterar respeter 
+{
+}
+
 }

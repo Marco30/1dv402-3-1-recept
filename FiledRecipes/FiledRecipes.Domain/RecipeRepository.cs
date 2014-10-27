@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace FiledRecipes.Domain
+namespace FiledRecipes.Domain //Marco villegas 2014-10-27
 {
     /// <summary>
     /// Holder for recipes.
@@ -14,42 +14,34 @@ namespace FiledRecipes.Domain
         /// Represents the recipe section.
         /// </summary>
         private const string SectionRecipe = "[Recept]";
-
         /// <summary>
         /// Represents the ingredients section.
         /// </summary>
         private const string SectionIngredients = "[Ingredienser]";
-
         /// <summary>
         /// Represents the instructions section.
         /// </summary>
         private const string SectionInstructions = "[Instruktioner]";
-
         /// <summary>
         /// Occurs after changes to the underlying collection of recipes.
         /// </summary>
         public event EventHandler RecipesChangedEvent;
-
         /// <summary>
         /// Specifies how the next line read from the file will be interpreted.
         /// </summary>
         private enum RecipeReadStatus { Indefinite, New, Ingredient, Instruction };
-
         /// <summary>
         /// Collection of recipes.
         /// </summary>
         private List<IRecipe> _recipes;
-
         /// <summary>
         /// The fully qualified path and name of the file with recipes.
         /// </summary>
         private string _path;
-
         /// <summary>
         /// Indicates whether the collection of recipes has been modified since it was last saved.
         /// </summary>
         public bool IsModified { get; protected set; }
-
         /// <summary>
         /// Initializes a new instance of the RecipeRepository class.
         /// </summary>
@@ -58,10 +50,8 @@ namespace FiledRecipes.Domain
         {
             // Throws an exception if the path is invalid.
             _path = Path.GetFullPath(path);
-
             _recipes = new List<IRecipe>();
         }
-
         /// <summary>
         /// Returns a collection of recipes.
         /// </summary>
@@ -71,7 +61,6 @@ namespace FiledRecipes.Domain
             // Deep copy the objects to avoid privacy leaks.
             return _recipes.Select(r => (IRecipe)r.Clone());
         }
-
         /// <summary>
         /// Returns a recipe.
         /// </summary>
@@ -82,7 +71,6 @@ namespace FiledRecipes.Domain
             // Deep copy the object to avoid privacy leak.
             return (IRecipe)_recipes[index].Clone();
         }
-
         /// <summary>
         /// Deletes a recipe.
         /// </summary>
@@ -99,7 +87,6 @@ namespace FiledRecipes.Domain
             IsModified = true;
             OnRecipesChanged(EventArgs.Empty);
         }
-
         /// <summary>
         /// Deletes a recipe.
         /// </summary>
@@ -108,24 +95,33 @@ namespace FiledRecipes.Domain
         {
             Delete(_recipes[index]);
         }
-
         /// <summary>
         /// Raises the RecipesChanged event.
         /// </summary>
         /// <param name="e">The EventArgs that contains the event data.</param>
         protected virtual void OnRecipesChanged(EventArgs e)
         {
-            // Make a temporary copy of the event to avoid possibility of 
-            // a race condition if the last subscriber unsubscribes 
+            // Make a temporary copy of the event to avoid possibility of
+            // a race condition if the last subscriber unsubscribes
             // immediately after the null check and before the event is raised.
             EventHandler handler = RecipesChangedEvent;
-
-            // Event will be null if there are no subscribers. 
+            // Event will be null if there are no subscribers.
             if (handler != null)
             {
                 // Use the () operator to raise the event.
                 handler(this, e);
             }
         }
+        public void Load()// metoden kommer lada in recept somfinns i mapen AppData/ recipes.txt
+        {
+
+        }
+
+        public void Save()// metoden kommer att spara ändrignar som gjort i recipes.txt 
+        {
+
+           
+        }
+
     }
 }
