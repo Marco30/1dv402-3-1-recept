@@ -114,13 +114,116 @@ namespace FiledRecipes.Domain //Marco villegas 2014-10-27
         }
         public void Load()// metoden kommer lada in recept somfinns i mapen AppData/ recipes.txt
         {
+            RecipeReadStatus receptStatus = 0;
+            Recipe receptObject = null;
 
+            
+            List<string> readInRecipes = new List<string>();//deklarerar dynamic arrays
+            List<IRecipe> addedRecipes = new List<IRecipe>();
+
+
+            try
+            {
+                using (StreamReader reader = new StreamReader(_path))
+                {
+                    string line;
+
+                    while ((line = reader.ReadLine()) != null)//inuti den här den här while satsen har vi funktionerna som läser in texten som finns i Recipes.txt
+                    {
+                        readInRecipes.Add(line);
+
+                        
+                       if(line == "")// bestämmer raden status i texten med andra vad det är, om det är titel, ingrediens eller instruktion på hur man lagar maten 
+                       {
+                           continue;
+                       }
+                        if (line == "[Recept]")
+                        {
+                            receptStatus = RecipeReadStatus.Indefinite;
+                        }
+
+                        if (line == "[Ingredienser]")
+                       {
+                           receptStatus = RecipeReadStatus.Ingredient;
+                       }
+                       
+                        if (line == "[Instruktioner]")
+                       {
+                          receptStatus = RecipeReadStatus.Instruction;
+                       }
+
+                          
+                       switch (receptStatus) // bestämmer hur man hanterar de olika raderna beroende på vilket status den fåt   
+                       {
+                           
+                           case RecipeReadStatus.Indefinite:// om det är en tittel så tas det han om här 
+                               
+                               if(line != "[Recept]")
+                               {
+                                   if (receptObject != null)
+                                   {
+                                       addedRecipes.Add(receptObject);
+                                   }
+                                   receptObject = new Recipe(line);
+                               }
+                               break;
+
+                        
+                           case RecipeReadStatus.Ingredient: // om det är en Ingredienser så tas det hand om här 
+                               	string[] ingredienser = line.Split(';');
+                              
+                                if(line != "[Ingredienser]")
+                               {
+                                   if (ingredienser.Length != 3)
+                                   {
+                                       throw new FileFormatException();
+                                   }
+                                      
+                                       Ingredient ingredient = new Ingredient(); // skapa ingredientobjekt 
+                                       
+                                       ingredient.Amount = ingredienser[0]; // läger in mängd i ingredientobjekt, 
+                                       ingredient.Measure = ingredienser[1];// läger in mått i ingredientobjek
+                                       ingredient.Name = ingredienser[2];// läger in namn i ingredientobjek
+                                   
+                                       
+                                       receptObject.Add(ingredient);// läger till ingredient till recipe-objectet
+                               }
+                               break;
+
+                           case RecipeReadStatus.Instruction:// om det är en Instruktioner så tas det hand om här 
+                               if (line != "[Instruktioner]")
+                               {
+                                   
+                                   receptObject.Add(line);// läger till Instruction till recipe-objectet
+                               }
+                               break;
+
+                           default:
+                               throw new FileFormatException();
+                       }
+                    }
+
+
+                    IEnumerable<IRecipe> sortRecipes = addedRecipes.OrderBy(r => r.Name);
+                    
+                    
+                    _recipes = sortRecipes.ToList(); // läger till sorterad lista till _recipes
+                }
+                IsModified = false;
+                OnRecipesChanged(EventArgs.Empty);
+            }
+                
+            catch (Exception)
+            {
+                throw new FileNotFoundException();
+            }
         }
 
-        public void Save()// metoden kommer att spara ändrignar som gjort i recipes.txt 
+
+        public void Save()// metoden kommer att spara ändrignar som gjort i recipes.txt somfinns i mapen AppData/ recipes.txt
         {
 
-           
+
         }
 
     }
