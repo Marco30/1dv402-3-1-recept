@@ -198,11 +198,38 @@ namespace FiledRecipes.Domain //Marco villegas 2014-10-27
         }
 
 
-        public void Save()// metoden kommer att spara ändrignar som gjort i recipes.txt somfinns i mapen AppData/ recipes.txt
+        public void Save()// metoden kommer att spara ändrignar som gjort i programet till recipes.txt somfinns i mapen AppData/
         {
 
+            using (StreamWriter writer = new StreamWriter(_path))
+            {
+                foreach (Recipe recipe in _recipes)
+                {
 
+                    writer.WriteLine(SectionRecipe);//sparar recept namnet på rätt plats  
+                    writer.WriteLine(recipe.Name);
+                    
+             
+                    writer.WriteLine(SectionIngredients);// sparar ingrediens dellen på rätt plats i filen
+                    foreach (Ingredient ingredient in recipe.Ingredients)
+                    {
+                        writer.WriteLine(string.Format("{0};{1};{2}",
+                            ingredient.Amount, ingredient.Measure, ingredient.Name));
+                    }
+
+
+                    writer.WriteLine(SectionInstructions);// sparar instruktioner dellen på rätt plats i filen
+                    foreach (string instruction in recipe.Instructions)
+                    {
+                        writer.WriteLine(instruction);
+                    }
+                }
+            }
+            IsModified = false;
+            OnRecipesChanged(EventArgs.Empty);
         }
+
+
 
     }
 }
