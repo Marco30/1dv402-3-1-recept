@@ -7,44 +7,44 @@ using System.Linq;
 
 namespace FiledRecipes.Views//Marco villegas 2014-10-27
 {
-     public class RecipeView : ViewBase, IRecipeView
-{
-         public void Show(IRecipe respet)// metoden presenterar alla respeter 
+    public class RecipeView : ViewBase, IRecipeView
     {
-        Console.Clear();
-        Header = respet.Name;
-        ShowHeaderPanel();
-
-        Console.WriteLine();
-        Console.WriteLine("Ingredienser som behövs ");
-        Console.WriteLine("-------------------------");
-
-        foreach (Ingredient ingredient in respet.Ingredients)
+        public void Show(IRecipe recepter)// metoden funktion är att strukturerar upp och presenterar recept i den svarta Console rutan 
         {
-            Console.WriteLine(ingredient);
+            Console.Clear();
+            Header = recepter.Name;
+            ShowHeaderPanel();
+
+
+            Console.WriteLine("\nIngredienser som behövs ");
+            Console.WriteLine("-------------------------");
+
+            foreach (Ingredient ingredient in recepter.Ingredients)
+            {
+                Console.WriteLine(ingredient);
+            }
+
+
+            Console.WriteLine("\ntill lagas så här");
+            Console.WriteLine("-------------------------");
+
+            int number = 0;
+            foreach (var instructions in recepter.Instructions)
+            {
+                number++;
+                Console.Write("<{0}>\n", number);// visar nummren i instruktions texten    
+                Console.WriteLine(instructions);
+            }
         }
 
-        Console.WriteLine();
-        Console.WriteLine("till laga så här");
-        Console.WriteLine("-------------------------");
-
-        int number = 0;
-        foreach (var instructions in respet.Instructions)
+        public void Show(IEnumerable<IRecipe> recepter) //metoden visar alla recept 
         {
-            number++;
-            Console.Write(number + " ");
-            Console.WriteLine(instructions);
+            foreach (var recept in recepter)
+            {
+                Show(recept);
+                ContinueOnKeyPressed();
+            }
         }
     }
-
-         public void Show(IEnumerable<IRecipe> respet) //metoden presenterar ett recipt i taget  
-    {
-        foreach (Recipe recipe in respet)
-        {
-            Show(respet);
-            ContinueOnKeyPressed();
-        }
-    }
-}
 
 }
